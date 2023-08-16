@@ -1,15 +1,20 @@
 #![allow(dead_code, unused_variables)]
 
+use std::collections::BTreeSet;
 use std::include_str;
+
+type DictType = BTreeSet<String>;
 
 fn main() {
     let word = "aylwari".as_bytes();
 
-    let dict = include_str!("dict2.txt")
-        .trim()
-        .split("\n")
-        .map(String::from)
-        .collect();
+    let dict: DictType = BTreeSet::from(
+        include_str!("dict2.txt")
+            .trim()
+            .split("\n")
+            .map(String::from)
+            .collect::<BTreeSet<String>>(),
+    );
 
     let mut words = all_permutations(&word, &dict);
     words.sort();
@@ -38,7 +43,7 @@ fn power_set(set: Vec<u8>) -> Vec<Vec<u8>> {
     return sets;
 }
 
-fn all_permutations(word: &[u8], dict: &Vec<String>) -> Vec<String> {
+fn all_permutations(word: &[u8], dict: &DictType) -> Vec<String> {
     let mut acc: Vec<String> = Vec::new();
     let indices = (0..word.len() as u8).collect::<Vec<u8>>();
     let mut indices_power_set: Vec<Vec<u8>> = power_set(indices);
@@ -59,7 +64,7 @@ fn swap(arr: &mut Vec<u8>, src: usize, dst: usize) {
 
 fn generate_permut(
     word: &[u8],
-    dict: &Vec<String>,
+    dict: &DictType,
     k: usize,
     arr: &mut Vec<u8>,
     acc: &mut Vec<String>,
@@ -74,14 +79,14 @@ fn generate_permut(
         }
         return;
     } else {
-        generate_permut(&word, &dict, k - 1, arr, acc);
+        generate_permut(&word, dict, k - 1, arr, acc);
         for i in 0..(k - 1) {
             if k % 2 == 0 {
                 swap(arr, i, k - 1);
             } else {
                 swap(arr, 0, k - 1);
             }
-            generate_permut(&word, &dict, k - 1, arr, acc);
+            generate_permut(&word, dict, k - 1, arr, acc);
         }
     }
 }
