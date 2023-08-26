@@ -22,10 +22,11 @@ fn main() {
     let word = word_string.as_bytes();
 
     let dict: DictType = BTreeSet::from(
-        include_str!("dict2.txt")
+        include_str!("dict.txt")
             .trim()
             .split("\n")
             .map(String::from)
+            .filter(|w| w.len() >= 4)
             .collect::<BTreeSet<String>>(),
     );
 
